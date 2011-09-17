@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/entryview_rss"
+	android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="horizontal"
+	android:background="#fff">
+	<ImageView android:id="@+id/entryview_rss_image" android:layout_width="280dip" android:layout_height="wrap_content"
+		android:background="#ccc" android:scaleType="fitXY" />
+	<LinearLayout android:id="@+id/entryview_details" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:orientation="vertical">
+		<TextView android:id="@+id/entryview_rss_title" android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:paddingLeft="8dip" android:paddingTop="5dip" android:paddingRight="8dip" android:paddingBottom="1dip"
+			android:text="Title" android:textSize="18dip" android:textColor="#505050" android:textStyle="bold"></TextView>
+		<TextView android:id="@+id/entryview_rss_date" android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:paddingLeft="8dip" android:paddingTop="1dip" android:paddingRight="8dip" android:paddingBottom="1dip"
+			android:gravity="right" android:text="Title" android:textSize="12dip" android:textColor="#202020"></TextView>
+		<ImageView android:layout_width="fill_parent" android:layout_height="1dip" android:src="@drawable/list_divider" />
+		<TextView android:id="@+id/entryview_rss_description" android:layout_width="fill_parent"
+			android:layout_height="fill_parent" android:paddingLeft="8dip" android:paddingTop="5dip" android:paddingRight="8dip"
+			android:paddingBottom="1dip" android:text="Description" android:textSize="16dip" android:textColor="#505050"></TextView>
+	</LinearLayout>
+	<!--
+		<RelativeLayout android:id="@+id/entryview_rss_fullimageholder" android:layout_width="fill_parent"
+		android:layout_height="fill_parent"> <ImageView android:id="@+id/entryview_rss_fullimage"
+		android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="#ccc"
+		android:scaleType="fitXY" android:layout_alignParentRight="true" android:layout_alignParentLeft="true"
+		android:layout_alignParentTop="true" android:layout_alignParentBottom="true" /> </RelativeLayout>
+	-->
+</LinearLayout>

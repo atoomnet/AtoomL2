@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
+	android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="#fff"
+	android:layout_gravity="bottom">
+	<ImageView android:id="@+id/splashscreen" android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:src="@drawable/splash" android:layout_gravity="center" android:background="#fff" android:scaleType="fitXY" />
+	<ImageView android:id="@+id/header" android:layout_width="fill_parent" android:layout_height="80dip"
+		android:src="@drawable/splash" android:layout_gravity="top" android:background="#fff" android:scaleType="fitXY" />
+	<ViewFlipper android:id="@+id/mainflipper" android:layout_width="fill_parent" android:layout_height="fill_parent">
+		<ListView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/listview"
+			android:layout_weight="1" android:headerDividersEnabled="false" android:footerDividersEnabled="true"
+			android:divider="@drawable/list_divider" android:dividerHeight="1dip" android:cacheColorHint="#FFFFFF"
+			android:paddingLeft="5dip"></ListView>
+		<LinearLayout android:id="@+id/entryview" android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:orientation="horizontal">
+			<VideoView android:id="@+id/entryview_video" android:layout_width="fill_parent" android:layout_height="250dip"
+				android:keepScreenOn="true" android:layout_gravity="center_horizontal" android:background="@android:color/transparent" />
+			<LinearLayout android:id="@+id/entryview_details" android:layout_width="fill_parent"
+				android:layout_height="fill_parent" android:orientation="vertical">
+				<TextView android:id="@+id/entryview_title" android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:paddingLeft="8dip" android:paddingTop="5dip" android:paddingRight="8dip" android:paddingBottom="1dip"
+					android:text="Title" android:textSize="18dip" android:textColor="#505050" android:textStyle="bold"></TextView>
+				<TextView android:id="@+id/entryview_date" android:layout_width="fill_parent" android:layout_height="wrap_content"
+					android:paddingLeft="8dip" android:paddingTop="1dip" android:paddingRight="8dip" android:paddingBottom="1dip"
+					android:gravity="right" android:text="Title" android:textSize="12dip" android:textColor="#202020"></TextView>
+				<ImageView android:layout_width="fill_parent" android:layout_height="1dip" android:src="@drawable/list_divider" />
+				<TextView android:id="@+id/entryview_description" android:layout_width="fill_parent" android:layout_height="fill_parent"
+					android:paddingLeft="8dip" android:paddingTop="5dip" android:paddingRight="8dip" android:paddingBottom="1dip"
+					android:text="Description" android:textSize="16dip" android:textColor="#505050"></TextView>
+				<!--
+					<RelativeLayout android:layout_marginTop="-40dip" android:gravity="right" android:layout_height="wrap_content"
+					android:layout_width="fill_parent" android:color="#000" android:layout_alignParentBottom="true"> <Button
+					android:id="@+id/entryview_button_back" android:layout_width="100dip" android:layout_height="fill_parent"
+					android:text="back" /> </RelativeLayout>
+				-->
+			</LinearLayout>
+		</LinearLayout>
+	</ViewFlipper>
+</LinearLayout>

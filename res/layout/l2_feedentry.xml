@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="horizontal"
+	android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="#fff" android:padding="5dip">
+	<ImageView android:layout_width="100dip" android:layout_height="70dip" android:scaleType="fitXY"></ImageView>
+	<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:background="#fff" android:paddingLeft="2dip" android:paddingRight="2dip">
+		<TextView android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="#fff"
+			android:paddingLeft="8dip" android:paddingTop="5dip" android:paddingRight="8dip" android:paddingBottom="1dip"
+			android:text="Title" android:textSize="16dip" android:textColor="#505050" android:textStyle="bold" />
+		<RelativeLayout android:layout_marginTop="-25dip" android:gravity="right" android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:layout_alignParentBottom="true">
+			<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:background="#fff"
+				android:paddingLeft="8dip" android:paddingTop="5dip" android:paddingRight="8dip" android:paddingBottom="1dip"
+				android:text="Title" android:textSize="12dip" android:textColor="#202020" android:gravity="right" />
+		</RelativeLayout>
+	</LinearLayout>
+</LinearLayout>
