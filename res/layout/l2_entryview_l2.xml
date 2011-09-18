@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent"
+	android:layout_height="wrap_content">
+	<LinearLayout android:id="@+id/entryview_l2" android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:orientation="vertical" android:background="#fff" android:scrollbars="vertical">
+		<ImageView android:id="@+id/entryview_l2_image" android:layout_width="fill_parent" android:layout_height="230dip"
+			android:paddingTop="5dip" android:paddingLeft="5dip" android:paddingRight="5dip" android:background="#fff"
+			android:scaleType="fitXY" />
+		<TextView android:id="@+id/entryview_l2_title" android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:paddingLeft="8dip" android:paddingTop="5dip" android:paddingRight="8dip" android:paddingBottom="1dip"
+			android:text="Title" android:textSize="18dip" android:textColor="#505050" android:textStyle="bold"></TextView>
+		<TextView android:id="@+id/entryview_l2_date" android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:paddingLeft="8dip" android:paddingTop="1dip" android:paddingRight="8dip" android:paddingBottom="1dip"
+			android:gravity="right" android:text="Title" android:textSize="12dip" android:textColor="#202020"></TextView>
+		<ImageView android:layout_width="fill_parent" android:layout_height="1dip" android:src="@drawable/list_divider" />
+		<LinearLayout android:id="@+id/entryview_l2_content" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:orientation="vertical" />
+		<LinearLayout android:paddingBottom="5dip" android:id="@+id/entryview_l2_comments" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:orientation="vertical" />
+	</LinearLayout>
+</ScrollView>

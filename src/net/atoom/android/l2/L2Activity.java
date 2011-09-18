@@ -25,12 +25,23 @@ import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import net.atoom.android.l2.feed.L2Feed;
+import net.atoom.android.l2.feed.L2FeedAdaptor;
+import net.atoom.android.l2.feed.L2FeedEntry;
+import net.atoom.android.l2.feed.L2FeedEntryComment;
+import net.atoom.android.l2.feed.L2FeedEntryContent;
+import net.atoom.android.l2.feed.L2FeedLoadListener;
+import net.atoom.android.l2.feed.L2FeedLoader;
+import net.atoom.android.res.ResourceEntity;
+import net.atoom.android.res.ResourceLoadListener;
+import net.atoom.android.res.ResourceLoadPriority;
 import net.atoom.android.res.ResourceLoader;
 import net.atoom.android.rss.RSSFeed;
 import net.atoom.android.rss.RSSFeedAdaptor;
 import net.atoom.android.rss.RSSFeedEntry;
 import net.atoom.android.rss.RSSFeedLoadListener;
 import net.atoom.android.rss.RSSFeedLoader;
+import net.atoom.android.util.LogBridge;
 import net.atoom.android.youtube.Feed;
 import net.atoom.android.youtube.FeedAdaptor;
 import net.atoom.android.youtube.FeedEntry;
@@ -55,7 +66,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.MediaController;
-import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.VideoView;
 import android.widget.ViewFlipper;
@@ -95,6 +106,9 @@ public class L2Activity extends Activity {
 	private RSSFeedAdaptor m_rssFeedAdaptor;
 	private RSSFeed m_rssFeed;
 
+	private L2FeedAdaptor m_l2FeedAdaptor;
+	private L2Feed m_l2Feed;
+
 	private File m_cacheDir;
 
 	private AppState m_appState;
@@ -127,7 +141,6 @@ public class L2Activity extends Activity {
 		getWindow().setSoftInputMode(1);
 
 		Display display = ((WindowManager) this.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-		// int rotation = display.getRotation();
 		int rotation = display.getOrientation();
 		if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) {
 			m_viewState = ViewState.POTRAIT;
@@ -145,7 +158,7 @@ public class L2Activity extends Activity {
 					spinToList();
 				}
 				if (m_appState != AppState.RSS) {
-					showRSSView();
+					showL2View();
 				}
 			}
 		});
@@ -165,9 +178,13 @@ public class L2Activity extends Activity {
 
 		m_feedAdaptor = new FeedAdaptor(this);
 		m_rssFeedAdaptor = new RSSFeedAdaptor(this);
+		m_l2FeedAdaptor = new L2FeedAdaptor(this);
 
-		loadRSSFeed();
-		showRSSView();
+		loadL2Feed();
+		showL2View();
+
+		// loadRSSFeed();
+		// showRSSView();
 		loadYoutubeFeed();
 		// initializeYoutubeView();
 	}
@@ -210,7 +227,7 @@ public class L2Activity extends Activity {
 	private void showRSSView() {
 
 		m_appState = AppState.RSS;
-		
+
 		ViewFlipper vf = (ViewFlipper) findViewById(R.id.mainflipper);
 		if (vf.getChildCount() == 2) {
 			vf.removeViewAt(1);
@@ -283,6 +300,158 @@ public class L2Activity extends Activity {
 		});
 	}
 
+	private void showL2View() {
+
+		m_appState = AppState.RSS;
+
+		ViewFlipper vf = (ViewFlipper) findViewById(R.id.mainflipper);
+		if (vf.getChildCount() == 2) {
+			vf.removeViewAt(1);
+		}
+
+		final ScrollView entryView;
+		if (m_viewState == ViewState.POTRAIT) {
+			entryView = (ScrollView) getLayoutInflater().inflate(R.layout.l2_entryview_l2, vf, false);
+		} else {
+			entryView = (ScrollView) getLayoutInflater().inflate(R.layout.l2_entryview_l2, vf, false);
+		}
+		vf.addView(entryView);
+
+		ListView listView = (ListView) findViewById(R.id.listview);
+		listView.setAdapter(m_l2FeedAdaptor);
+
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int index, long time) {
+
+				L2FeedEntry entry = m_l2Feed.getFeedEntries().get(index);
+
+				entryView.scrollTo(0, 0);
+
+				ImageView imageView = (ImageView) findViewById(R.id.entryview_l2_image);
+				if (entry.getThumbnailResourceEntity() != null) {
+					InputStream is;
+					try {
+						is = entry.getThumbnailResourceEntity().getInputStream();
+						imageView.setImageBitmap(BitmapFactory.decodeStream(is));
+						is.close();
+					} catch (IOException e) {
+					}
+				}
+
+				TextView titleView = (TextView) findViewById(R.id.entryview_l2_title);
+				titleView.setText(entry.getTitle());
+
+				TextView dateView = (TextView) findViewById(R.id.entryview_l2_date);
+				dateView.setText(entry.getPublished());
+				try {
+					Date date = RSSFeedAdaptor.DATE_FORMAT_IN.parse(entry.getPublished());
+					dateView.setText(DATE_FORMAT_OUT.format(date));
+				} catch (ParseException e) {
+				}
+
+				LinearLayout contentView = (LinearLayout) findViewById(R.id.entryview_l2_content);
+				contentView.removeAllViews();
+				if (entry.getContents() != null) {
+					for (L2FeedEntryContent content : entry.getContents()) {
+						if (content.getContent() == null || "".equals(content.getContent())) {
+							LogBridge.w("Receiving content without content... if you catch my drift ;)");
+							continue;
+						}
+						if (content.getContentType() == L2FeedEntryContent.ContentType.TEXT) {
+							final TextView ivx = (TextView) getLayoutInflater().inflate(R.layout.l2_entryview_l2_text,
+									contentView, false);
+							ivx.setText(content.getContent());
+							contentView.addView(ivx);
+						} else {
+							final ImageView ivx = (ImageView) getLayoutInflater().inflate(
+									R.layout.l2_entryview_l2_image, contentView, false);
+							contentView.addView(ivx);
+
+							m_resourceLoader.loadResource(content.getContent(), ResourceLoadPriority.HIGH,
+									new ResourceLoadListener() {
+										@Override
+										public void resourceLoaded(final ResourceEntity resource) {
+											m_handler.post(new Runnable() {
+												@Override
+												public void run() {
+													InputStream is;
+													try {
+														is = resource.getInputStream();
+														ivx.setImageBitmap(BitmapFactory.decodeStream(is));
+														is.close();
+													} catch (IOException e) {
+													}
+												}
+											});
+										}
+									});
+						}
+					}
+				}
+				LinearLayout commentsView = (LinearLayout) findViewById(R.id.entryview_l2_comments);
+				commentsView.removeAllViews();
+				if (entry.getComments() != null) {
+					getLayoutInflater().inflate(R.layout.l2_entryview_l2_commenthead, commentsView, true);
+					for (L2FeedEntryComment comment : entry.getComments()) {
+						final LinearLayout commentView = (LinearLayout) getLayoutInflater().inflate(
+								R.layout.l2_entryview_l2_comment, commentsView, false);
+						final TextView commentContentView = (TextView) commentView
+								.findViewById(R.id.entryview_l2_comment_content);
+						commentContentView.setText(comment.getBody());
+						final TextView commentDateView = (TextView) commentView
+								.findViewById(R.id.entryview_l2_comment_date);
+						try {
+							Date date = RSSFeedAdaptor.DATE_FORMAT_IN.parse(comment.getDate());
+							commentDateView.setText(comment.getAuthor() + ", " + DATE_FORMAT_OUT.format(date));
+						} catch (ParseException e) {
+						}
+						commentsView.addView(commentView);
+					}
+				}
+				spinToDetail();
+			}
+		});
+	}
+
+	private void loadL2Feed() {
+
+		LogBridge.w("Loading L2 Feed....");
+		new L2FeedLoader(m_resourceLoader, m_executorService).loadFeed("http://lou2.com/bramfeed.xml.php",
+				new L2FeedLoadListener() {
+
+					@Override
+					public void feedLoaded(L2Feed feed) {
+						LogBridge.w("L2 Feed loaded!");
+						m_l2Feed = feed;
+						for (L2FeedEntry feedEntry : m_l2Feed.getFeedEntries()) {
+							m_l2FeedAdaptor.addEntry(feedEntry);
+						}
+						m_handler.post(new Runnable() {
+							public void run() {
+								m_l2FeedAdaptor.notifyDataSetChanged();
+								hideSplashScreen();
+							}
+						});
+					}
+
+					@Override
+					public void entryLoaded(final L2FeedEntry feedEntry) {
+						LogBridge.w("L2 Entry loaded!");
+					}
+
+					@Override
+					public void entryThumbnailLoaded(L2FeedEntry feedEntry) {
+						m_handler.post(new Runnable() {
+							public void run() {
+								m_l2FeedAdaptor.notifyDataSetChanged();
+							}
+						});
+					}
+				}, FEED_STALETIME);
+	}
+
 	private void loadRSSFeed() {
 
 		new RSSFeedLoader(m_resourceLoader, m_executorService).loadFeed("http://lou2.com/loulou.rss.php",
@@ -318,7 +487,7 @@ public class L2Activity extends Activity {
 	}
 
 	private void showYouTubeView() {
-		
+
 		m_appState = AppState.YOUTUBE;
 
 		ViewFlipper vf = (ViewFlipper) findViewById(R.id.mainflipper);
